@@ -11,6 +11,7 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  u2Token
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -68,6 +69,14 @@ describe("POST /companies", function () {
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(400);
   });
+
+  test("fail: user is not admin, cannot create a company", async function(){
+    const resp = await request(app)
+        .post("/companies")
+        .send(newCompany)
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
 });
 
 /************************************** GET /companies */
@@ -103,7 +112,7 @@ describe("GET /companies", function () {
     });
   });
 
-  /**the request should return a company */
+   /**the request should return a company */
   test("works: filter by name, maxEmployees, minEmployees", async function(){
     const resp = await request(app)
     .get(`/companies/?name=${filters.name}&maxEmployees=${filters.maxEmployees}&minEmployees=${filters.minEmployees}`)
@@ -387,6 +396,16 @@ describe("PATCH /companies/:handle", function () {
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(400);
   });
+
+  test("fail: user is not admin, cannot update the company", async function(){
+    const resp = await request(app)
+        .patch(`/companies/c1`)
+        .send({
+          name: "C1-new",
+        })
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
 });
 
 /************************************** DELETE /companies/:handle */
@@ -410,5 +429,12 @@ describe("DELETE /companies/:handle", function () {
         .delete(`/companies/nope`)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(404);
+  });
+
+  test("fail: user is not admin, cannot delete the company", async function(){
+    const resp = await request(app)
+        .delete(`/companies/c1`)
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
   });
 });
