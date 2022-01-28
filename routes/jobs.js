@@ -27,7 +27,6 @@ router.post( "/", ensureLoggedIn, authenticateAdmin, async function (req, res, n
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-      console.log(req.body);
       const job = await Job.create(req.body);
       return res.status(201).json({ job });
     } catch (err) {
