@@ -193,9 +193,8 @@ describe("findAll", function () {
   });
   test("not work: filter by inappropriate filter name", async function(){
     try{
-        let companies = await Company.findAll({
-        hello: "world"
-      });
+        await Company.findAll({hello: "world"});
+        fail();
     } catch(err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
