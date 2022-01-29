@@ -38,11 +38,17 @@ router.post( "/", ensureLoggedIn, authenticateAdmin, async function (req, res, n
 /**GET / =>
  * { jobs: [{title, salary, ...},...,...] }
  *
+ * Can filter by:
+ *  title, 
+ *  minSalary, 
+ *  hasEquity
+ * 
  * Authorization required: none
  */
 router.get("/", async function (req, res, next) {
   try {
-    const jobs = await Job.findaAll();
+    const filters = req.query;
+    const jobs = await Job.findAll(filters);
     return res.json({ jobs });
   } catch (err) {
     return next(err);
