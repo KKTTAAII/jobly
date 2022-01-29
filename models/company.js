@@ -2,6 +2,7 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
+const Job = require("../models/job");
 
 /** Related functions for companies. */
 
@@ -17,29 +18,24 @@ class Company {
 
   static async create({ handle, name, description, numEmployees, logoUrl }) {
     const duplicateCheck = await db.query(
-          `SELECT handle
+      `SELECT handle
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]
+    );
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${handle}`);
 
     const result = await db.query(
-          `INSERT INTO companies
+      `INSERT INTO companies
            (handle, name, description, num_employees, logo_url)
            VALUES ($1, $2, $3, $4, $5)
            RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
-        [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      [handle, name, description, numEmployees, logoUrl]
     );
     const company = result.rows[0];
-    
+
     return company;
   }
 
@@ -50,15 +46,15 @@ class Company {
 
   static async findAll(filters) {
     const filterNames = Object.keys(filters);
-    /**check if the req.query/filters has any key that is 
+    /**check if the req.query/filters has any key that is
      * not either name, minEmployees, maxEmployees */
-    for(const name of filterNames){
-      if(!["name","minEmployees","maxEmployees"].includes(name)){
+    for (const name of filterNames) {
+      if (!["name", "minEmployees", "maxEmployees"].includes(name)) {
         throw new BadRequestError("Cannot include inappropriate filter");
       }
     }
     /**filtered by all three filters - name, max, min */
-    if(filters.name && filters.maxEmployees && filters.minEmployees){
+    if (filters.name && filters.maxEmployees && filters.minEmployees) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -69,11 +65,12 @@ class Company {
           WHERE name ILIKE '%${filters.name}%' 
           AND ${parseInt(filters.minEmployees)} <= num_employees 
           AND num_employees <= ${parseInt(filters.maxEmployees)}
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
     /**filtered by name and min */
-    if(filters.name && filters.minEmployees){
+    if (filters.name && filters.minEmployees) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -83,11 +80,12 @@ class Company {
           FROM companies
           WHERE name ILIKE '%${filters.name}%' 
           AND ${parseInt(filters.minEmployees)} <= num_employees 
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
     /**filtered by name and max */
-    if(filters.name && filters.maxEmployees){
+    if (filters.name && filters.maxEmployees) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -97,11 +95,12 @@ class Company {
           FROM companies
           WHERE name ILIKE '%${filters.name}%' 
           AND num_employees <= ${parseInt(filters.maxEmployees)}
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
     /**filter ny min and max */
-    if(filters.maxEmployees && filters.minEmployees){
+    if (filters.maxEmployees && filters.minEmployees) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -111,11 +110,12 @@ class Company {
           FROM companies
           WHERE  ${parseInt(filters.minEmployees)} <= num_employees 
           AND num_employees <= ${parseInt(filters.maxEmployees)}
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
     /**filtered by name */
-    if(filters.name){
+    if (filters.name) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -124,11 +124,12 @@ class Company {
                 logo_url AS "logoUrl"
           FROM companies
           WHERE name ILIKE '%${filters.name}%' 
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
     /**filtered by max */
-    if(filters.maxEmployees){
+    if (filters.maxEmployees) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -137,11 +138,12 @@ class Company {
                 logo_url AS "logoUrl"
           FROM companies
           WHERE num_employees <= ${parseInt(filters.maxEmployees)}
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
     /**filtered by min */
-    if(filters.minEmployees){
+    if (filters.minEmployees) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -150,7 +152,8 @@ class Company {
                 logo_url AS "logoUrl"
           FROM companies
           WHERE ${parseInt(filters.minEmployees)} <= num_employees  
-          ORDER BY name`);
+          ORDER BY name`
+      );
       return companiesRes.rows;
     }
 
@@ -161,10 +164,10 @@ class Company {
               num_employees AS "numEmployees",
               logo_url AS "logoUrl"
         FROM companies
-        ORDER BY name`);
+        ORDER BY name`
+    );
     return companiesRes.rows;
   }
-  
 
   /** Given a company handle, return data about company.
    *
@@ -176,18 +179,27 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(
-          `SELECT handle,
+      `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
            FROM companies
            WHERE handle = $1`,
-        [handle]);
-
+      [handle]
+    );
     const company = companyRes.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+    const jobRes = await db.query(
+      `SELECT *
+      FROM jobs
+      WHERE company_handle = $1`,
+      [handle]
+    );
+    const jobs = jobRes.rows;
+    company.jobs = jobs
 
     return company;
   }
@@ -205,12 +217,10 @@ class Company {
    */
 
   static async update(handle, data) {
-    const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      numEmployees: "num_employees",
+      logoUrl: "logo_url",
+    });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE companies 
@@ -236,16 +246,16 @@ class Company {
 
   static async remove(handle) {
     const result = await db.query(
-          `DELETE
+      `DELETE
            FROM companies
            WHERE handle = $1
            RETURNING handle`,
-        [handle]);
+      [handle]
+    );
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
   }
 }
-
 
 module.exports = Company;

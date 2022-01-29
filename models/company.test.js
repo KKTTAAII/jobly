@@ -212,6 +212,15 @@ describe("get", function () {
       description: "Desc1",
       numEmployees: 1,
       logoUrl: "http://c1.img",
+      jobs: [
+              {
+               "company_handle": "c1",
+               "equity": "0",
+               "id": expect.any(Number),
+               "salary": 32000,
+               "title": "guest service",
+             }
+        ]
     });
   });
 

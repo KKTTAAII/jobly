@@ -314,6 +314,15 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs: [
+               {
+                   "company_handle": "c1",
+                   "equity": "0",
+                   "id": expect.any(Number),
+                   "salary": 48000,
+                   "title": "guest services",
+                 },
+          ],
       },
     });
   });
@@ -327,6 +336,7 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs: []
       },
     });
   });
