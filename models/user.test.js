@@ -13,6 +13,7 @@ const {
   commonAfterEach,
   commonAfterAll,
 } = require("./_testCommon");
+const Job = require("./job");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -214,14 +215,55 @@ describe("update", function () {
 describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
-    const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
+    const res = await db.query("SELECT * FROM users WHERE username='u1'");
     expect(res.rows.length).toEqual(0);
   });
 
   test("not found if no such user", async function () {
     try {
       await User.remove("nope");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/******************************* apply for a job */
+
+describe("apply", function () {
+  test("works: can apply", async function () {
+    const jobResp = await db.query(
+      `SELECT * 
+      FROM jobs 
+      WHERE title = 'guest service'`);
+    const jobId = jobResp.rows[0].id
+    const applied = await User.apply("u1", jobId);
+    expect(applied).toEqual({
+      username: "u1",
+      firstName: "U1F",
+      lastName: "U1L",
+      email: "u1@email.com",
+      isAdmin: false,
+      jobs: {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1"
+      }
+    });
+
+    const aplication = await db.query(
+      `SELECT * 
+      FROM applications`
+    )
+    expect(aplication.rows.length).toEqual(1);
+  });
+
+  test("not found if no such user", async function () {
+    try {
+      await User.apply("nope");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
