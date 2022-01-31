@@ -1,6 +1,5 @@
 const { BadRequestError } = require("../expressError");
 const { sqlForPartialUpdate } = require("./sql");
-
 const dataToUpdate = { firstName: "Aliya", age: 32 };
 const jsToSql = { firstName: "first_name", age: "age" };
 const noData = {};

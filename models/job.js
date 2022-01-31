@@ -44,130 +44,141 @@ class Job {
    */
   static async findAll(filters) {
     const filterNames = Object.keys(filters);
-    /**check if the req.query/filters has any key that is 
+    /**check if the req.query/filters has any key that is
      * not either title, minSalary, hasEquity */
-    for(const name of filterNames){
-      if(!["title","minSalary","hasEquity"].includes(name)){
+    for (const name of filterNames) {
+      if (!["title", "minSalary", "hasEquity"].includes(name)) {
         throw new BadRequestError("Cannot include inappropriate filter");
       }
     }
 
     /**filtered by all three filters - title, minSalary, hasEquity */
-    if(filters.title && filters.minSalary && filters.hasEquity === "true"){
+    if (filters.title && filters.minSalary && filters.hasEquity === "true") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE title ILIKE '%${filters.title}%' 
           AND salary >= ${parseInt(filters.minSalary)} 
           AND equity != 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by all three filters - title, minSalary, !hasEquity */
-    if(filters.title && filters.minSalary && filters.hasEquity === "false"){
+    if (filters.title && filters.minSalary && filters.hasEquity === "false") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE title ILIKE '%${filters.title}%' 
           AND salary >= ${parseInt(filters.minSalary)} 
           AND equity = 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by title and minSalary */
-    if(filters.title && filters.minSalary){
+    if (filters.title && filters.minSalary) {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE title ILIKE '%${filters.title}%' 
           AND salary >= ${parseInt(filters.minSalary)} 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by title and hasEquity */
-    if(filters.title && filters.hasEquity === "true"){
+    if (filters.title && filters.hasEquity === "true") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE title ILIKE '%${filters.title}%' 
           AND equity != 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by title and !hasEquity */
-    if(filters.title && filters.hasEquity === "false"){
+    if (filters.title && filters.hasEquity === "false") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE title ILIKE '%${filters.title}%' 
           AND equity = 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by minSalary and hasEquity */
-    if(filters.minSalary && filters.hasEquity === "true"){
+    if (filters.minSalary && filters.hasEquity === "true") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE salary >= ${parseInt(filters.minSalary)}
           AND equity != 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by minSalary and !hasEquity */
-    if(filters.minSalary && filters.hasEquity === "false"){
+    if (filters.minSalary && filters.hasEquity === "false") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE salary >= ${parseInt(filters.minSalary)}
           AND equity = 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filtered by title */
-    if(filters.title){
+    if (filters.title) {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE title ILIKE '%${filters.title}%' 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filter by minSalary */
-    if(filters.minSalary){
+    if (filters.minSalary) {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE salary >= ${parseInt(filters.minSalary)}
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filter by hasEquity */
-    if(filters.hasEquity === "true"){
+    if (filters.hasEquity === "true") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE equity != 0.000
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
     /**filter by !hasEquity */
-    if(filters.hasEquity === "false"){
+    if (filters.hasEquity === "false") {
       const jobsRes = await db.query(
         `SELECT *
           FROM jobs
           WHERE equity = 0.000 
-          ORDER BY title`);
+          ORDER BY title`
+      );
       return jobsRes.rows;
     }
 
@@ -223,7 +234,6 @@ class Job {
       [id]
     );
     const job = result.rows[0];
-
     if (!job) throw new NotFoundError("Job not found");
   }
 }

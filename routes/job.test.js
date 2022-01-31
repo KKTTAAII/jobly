@@ -1,10 +1,8 @@
 "use strict";
 
 const request = require("supertest");
-
 const db = require("../db");
 const app = require("../app");
-
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -13,18 +11,16 @@ const {
   u1Token,
   u2Token,
 } = require("./_testCommon");
-const res = require("express/lib/response");
-
-beforeAll(commonBeforeAll);
-beforeEach(commonBeforeEach);
-afterEach(commonAfterEach);
-afterAll(commonAfterAll);
-
 const filters = {
   title: "guest",
   minSalary: 30000,
   hasEquity: "false",
 };
+
+beforeAll(commonBeforeAll);
+beforeEach(commonBeforeEach);
+afterEach(commonAfterEach);
+afterAll(commonAfterAll);
 
 /********************POST /jobs */
 
@@ -221,8 +217,8 @@ describe("GET /jobs/?filters", function () {
   });
 
   test("fail with error inappropriate filter name", async function () {
-      const resp = await request(app).get("/jobs/?hello=world&title=manager");
-      expect(resp.statusCode).toEqual(400);
+    const resp = await request(app).get("/jobs/?hello=world&title=manager");
+    expect(resp.statusCode).toEqual(400);
   });
 });
 

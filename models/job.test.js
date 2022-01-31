@@ -19,7 +19,7 @@ const filters = {
   title: "guest",
   minSalary: 30000,
   hasEquity: "false",
-}
+};
 
 /******************************** create */
 
@@ -87,127 +87,141 @@ describe("find all jobs", function () {
     ]);
   });
 
-  test("works: filter by title, minSalary, and hasEquity", async function(){
+  test("works: filter by title, minSalary, and hasEquity", async function () {
     let jobs = await Job.findAll(filters);
-    expect(jobs).toEqual([{
+    expect(jobs).toEqual([
+      {
         id: expect.any(Number),
         title: "guest service",
         salary: 32000,
         equity: "0",
-        company_handle: "c1"
-    }]);
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("works: filter by title, minSalary, and !hasEquity", async function(){
+  test("works: filter by title, minSalary, and !hasEquity", async function () {
     let jobs = await Job.findAll({
       title: "guest",
       minSalary: 30000,
-      hasEquity: "true"
+      hasEquity: "true",
     });
     expect(jobs).toEqual([]);
   });
 
-  test("works: filter by title and minSalary", async function(){
+  test("works: filter by title and minSalary", async function () {
     let jobs = await Job.findAll({
       title: "guest",
-      minSalary: 30000
+      minSalary: 30000,
     });
-    expect(jobs).toEqual([{
-      id: expect.any(Number),
-      title: "guest service",
-      salary: 32000,
-      equity: "0",
-      company_handle: "c1"
-    }]);
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("works: filter by title and hasEquity", async function(){
+  test("works: filter by title and hasEquity", async function () {
     let jobs = await Job.findAll({
       title: "guest",
-      hasEquity: "true"
+      hasEquity: "true",
     });
     expect(jobs).toEqual([]);
   });
 
-  test("works: filter by title and !hasEquity", async function(){
+  test("works: filter by title and !hasEquity", async function () {
     let jobs = await Job.findAll({
       title: "guest",
-      hasEquity: "false"
+      hasEquity: "false",
     });
-    expect(jobs).toEqual([{
-      id: expect.any(Number),
-      title: "guest service",
-      salary: 32000,
-      equity: "0",
-      company_handle: "c1"
-    }]);
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("works: filter by minSalary and hasEquity", async function(){
+  test("works: filter by minSalary and hasEquity", async function () {
     let jobs = await Job.findAll({
       minSalary: 30000,
-      hasEquity: "true"
+      hasEquity: "true",
     });
     expect(jobs).toEqual([]);
   });
 
-  test("works: filter by minSalary and !hasEquity", async function(){
+  test("works: filter by minSalary and !hasEquity", async function () {
     let jobs = await Job.findAll({
       minSalary: 30000,
-      hasEquity: "false"
+      hasEquity: "false",
     });
-    expect(jobs).toEqual([{
-      id: expect.any(Number),
-      title: "guest service",
-      salary: 32000,
-      equity: "0",
-      company_handle: "c1"
-    }]);
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("works: filter by title", async function(){
-    let jobs = await Job.findAll({title: "guest"});
-    expect(jobs).toEqual([{
-      id: expect.any(Number),
-      title: "guest service",
-      salary: 32000,
-      equity: "0",
-      company_handle: "c1"
-    }]);
+  test("works: filter by title", async function () {
+    let jobs = await Job.findAll({ title: "guest" });
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("works: filter by minSalary", async function(){
-    let jobs = await Job.findAll({minSalary: 30000});
-    expect(jobs).toEqual([{
-      id: expect.any(Number),
-      title: "guest service",
-      salary: 32000,
-      equity: "0",
-      company_handle: "c1"
-    }]);
+  test("works: filter by minSalary", async function () {
+    let jobs = await Job.findAll({ minSalary: 30000 });
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("works: filter by hasEquity", async function(){
-    let jobs = await Job.findAll({hasEquity: "true"});
+  test("works: filter by hasEquity", async function () {
+    let jobs = await Job.findAll({ hasEquity: "true" });
     expect(jobs).toEqual([]);
   });
 
-  test("works: filter by !hasEquity", async function(){
-    let jobs = await Job.findAll({hasEquity: "false"});
-    expect(jobs).toEqual([{
-      id: expect.any(Number),
-      title: "guest service",
-      salary: 32000,
-      equity: "0",
-      company_handle: "c1"
-    }]);
+  test("works: filter by !hasEquity", async function () {
+    let jobs = await Job.findAll({ hasEquity: "false" });
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "guest service",
+        salary: 32000,
+        equity: "0",
+        company_handle: "c1",
+      },
+    ]);
   });
 
-  test("not work: filter by inappropriate filter name", async function(){
-    try{
-        await Job.findAll({hello: "world"});
-        fail();
-    } catch(err) {
+  test("not work: filter by inappropriate filter name", async function () {
+    try {
+      await Job.findAll({ hello: "world" });
+      fail();
+    } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
@@ -306,7 +320,7 @@ describe("delet a job", function () {
       await Job.remove(123456);
       fail();
     } catch (err) {
-        expect(err instanceof NotFoundError).toBeTruthy();
+      expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
 });

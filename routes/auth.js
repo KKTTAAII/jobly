@@ -3,7 +3,6 @@
 /** Routes for authentication. */
 
 const jsonschema = require("jsonschema");
-
 const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
@@ -36,7 +35,6 @@ router.post("/token", async function (req, res, next) {
   }
 });
 
-
 /** POST /auth/register:   { user } => { token }
  *
  * user must include { username, password, firstName, lastName, email }
@@ -61,6 +59,5 @@ router.post("/register", async function (req, res, next) {
     return next(err);
   }
 });
-
 
 module.exports = router;

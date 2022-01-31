@@ -35,7 +35,6 @@ class Company {
       [handle, name, description, numEmployees, logoUrl]
     );
     const company = result.rows[0];
-
     return company;
   }
 
@@ -199,8 +198,7 @@ class Company {
       [handle]
     );
     const jobs = jobRes.rows;
-    company.jobs = jobs
-
+    company.jobs = jobs;
     return company;
   }
 
@@ -233,9 +231,7 @@ class Company {
                                 logo_url AS "logoUrl"`;
     const result = await db.query(querySql, [...values, handle]);
     const company = result.rows[0];
-
     if (!company) throw new NotFoundError(`No company: ${handle}`);
-
     return company;
   }
 
@@ -253,7 +249,6 @@ class Company {
       [handle]
     );
     const company = result.rows[0];
-
     if (!company) throw new NotFoundError(`No company: ${handle}`);
   }
 }

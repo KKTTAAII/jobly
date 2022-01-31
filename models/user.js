@@ -202,6 +202,7 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
 
+  /** User can apply for a job and it creates an application in DB */
   static async apply(username, jobId) {
     const userRes = await db.query(
       `SELECT username,
