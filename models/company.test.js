@@ -20,8 +20,6 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-
-
 /************************************** create */
 
 describe("create", function () {
@@ -211,6 +209,7 @@ describe("findAll", function () {
       await Company.findAll({ hello: "world" });
       fail();
     } catch (err) {
+      console.log(err);
       expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
